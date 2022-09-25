@@ -44,7 +44,6 @@ class ProfilesQueriesMixin:
     ) -> None: ...
 
 class Queries(
-    TagsQueriesMixin,
     UsersQueriesMixin,
     ProfilesQueriesMixin,
 ): ...
