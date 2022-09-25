@@ -16,6 +16,7 @@ from app.resources import strings
 from app.services import jwt
 from app.services.authentication import check_email_is_taken, check_username_is_taken
 
+
 router = APIRouter()
 
 
