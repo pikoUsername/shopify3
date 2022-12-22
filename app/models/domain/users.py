@@ -14,11 +14,11 @@ class User(RWModel):
 
 class UserInDB(IDModelMixin, DateTimeModelMixin, User):
     salt: str = ""
-    hashed_password: str = ""
+    encrypted_password: str = ""
 
     def check_password(self, password: str) -> bool:
-        return security.verify_password(self.salt + password, self.hashed_password)
+        return security.verify_password(self.salt + password, self.encrypted_password)
 
     def change_password(self, password: str) -> None:
         self.salt = security.generate_salt()
-        self.hashed_password = security.get_password_hash(self.salt + password)
+        self.encrypted_password = security.get_password_hash(self.salt + password)

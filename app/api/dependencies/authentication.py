@@ -3,15 +3,14 @@ from typing import Callable, Optional
 
 from fastapi import Depends, HTTPException, Security
 from fastapi.security import APIKeyHeader
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import requests, status
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.api.dependencies.database import get_repository
+from app.api.dependencies.database import get_connection
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
-from app.db.errors import EntityDoesNotExist
-from app.db.repositories.users import UsersRepository
-from app.models.domain.users import User
+from app.db.repositories.user import UserCrud, Users
 from app.resources import strings
 from app.services import jwt
 
@@ -76,10 +75,10 @@ def _get_authorization_header_optional(
 
 
 async def _get_current_user(
-    users_repo: UsersRepository = Depends(get_repository(UsersRepository)),
+    session: AsyncSession = Depends(get_connection),
     token: str = Depends(_get_authorization_header_retriever()),
     settings: AppSettings = Depends(get_app_settings),
-) -> User:
+) -> Users:
     try:
         username = jwt.get_username_from_token(
             token,
@@ -91,21 +90,22 @@ async def _get_current_user(
             detail=strings.MALFORMED_PAYLOAD,
         )
 
-    try:
-        return await users_repo.get_user_by_username(username=username)
-    except EntityDoesNotExist:
+    result = await UserCrud.get_by_username(session, username=username)
+
+    if not result:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=strings.MALFORMED_PAYLOAD,
         )
+    return result
 
 
 async def _get_current_user_optional(
-    repo: UsersRepository = Depends(get_repository(UsersRepository)),
+    session: AsyncSession = Depends(get_connection),
     token: str = Depends(_get_authorization_header_retriever(required=False)),
     settings: AppSettings = Depends(get_app_settings),
-) -> Optional[User]:
+) -> Optional[Users]:
     if token:
-        return await _get_current_user(repo, token, settings)
+        return await _get_current_user(session, token, settings)
 
     return None

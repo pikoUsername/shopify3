@@ -20,6 +20,8 @@ parts/
 sdist/
 var/
 wheels/
+app/api/routes/shop/*
+docs/
 *.egg-info/
 .installed.cfg
 *.egg

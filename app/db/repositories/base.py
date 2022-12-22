@@ -1,10 +1,16 @@
-from asyncpg.connection import Connection
+import sqlalchemy as sa
+
+from app.db.engine import Base
 
 
-class BaseRepository:
-    def __init__(self, conn: Connection) -> None:
-        self._conn = conn
+class BaseModel(Base):
+	__abstract__ = True
 
-    @property
-    def connection(self) -> Connection:
-        return self._conn
+	id = sa.Column(sa.BigInteger, autoincrement=True, index=True, primary_key=True, unique=True)
+
+
+class TimedModel(BaseModel):
+	__abstract__ = True
+
+	created_at = sa.Column(sa.DateTime, server_default=sa.func.now())
+	updated_at = sa.Column(sa.DateTime, onupdate=sa.func.now())

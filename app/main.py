@@ -1,29 +1,35 @@
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
-from starlette.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import sentry_sdk
 
 from app.api.errors.http_error import http_error_handler
 from app.api.errors.validation_error import http422_error_handler
 from app.api.routes.api import router as api_router
 from app.core.config import get_app_settings
 from app.core.events import create_start_app_handler, create_stop_app_handler
+from app import middlewares
 
 
 def get_application() -> FastAPI:
+    load_dotenv()
     settings = get_app_settings()
 
     settings.configure_logging()
 
     application = FastAPI(**settings.fastapi_kwargs)
+    if not settings.debug:
+        sentry_sdk.init(
+            dsn="https://287fb62c07eb457fa646b1435f74a38d@o4504305064017920.ingest.sentry.io/4504305096851456",
 
-    application.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.allowed_hosts,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=1.0
+        )
+
+    middlewares.setup(application)
 
     application.add_event_handler(
         "startup",
