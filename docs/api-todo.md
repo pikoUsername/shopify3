@@ -1,3 +1,7 @@
+# DEPRECATED
+
+### reason: DOES NOT FOLLOW REST API STANDARDS 
+
 all APIs listed here 
 
     Users: 
@@ -18,22 +22,14 @@ all APIs listed here
         product(what users can do with the product): 
             /get_info  
             /buy -> to other api 
-            /rate
+            /rate 
             /report <reason> 
         seller: 
-            product(what seller can do with the product): 
-                /set-image 
-                /remove
+            product(what seller can do with the product):
+                /remove <data>
                 /hide
-                /set-open-date <date>
-                /set-close-date <date>
                 /create <data>
-                /set-tags <tags>
                 /change <product's setting(-s)>
 
     Admin panel: 
         CRUD Model for each model(except user(no update, remove))
-
-    CDN: 
-        /upload [image]
-        /download <url | id | dir>

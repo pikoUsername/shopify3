@@ -4,11 +4,11 @@ from app.core.settings.app import AppSettings
 
 
 class DevAppSettings(AppSettings):
-    debug: bool = True
+	debug: bool = True
 
-    title: str = "Dev FastAPI example application"
+	title: str = "Dev FastAPI example application"
 
-    logging_level: int = logging.DEBUG
+	logging_level: int = logging.DEBUG
 
-    class Config(AppSettings.Config):
-        env_file = ".env"
+	class Config(AppSettings.Config):
+		env_file = ".env"

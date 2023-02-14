@@ -12,7 +12,6 @@ from app.core.settings.app import AppSettings
 from app.resources import strings
 from app.services import jwt, auth
 
-
 router = APIRouter()
 
 

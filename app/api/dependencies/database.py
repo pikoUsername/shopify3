@@ -1,12 +1,11 @@
 from typing import AsyncGenerator
 
+from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.engine import Session
 
-
-async def get_connection() -> AsyncGenerator[AsyncSession, None]:
-    async with Session() as ses:
-        ses: AsyncSession
-        async with ses.begin():
-            yield ses
+async def get_connection(request: Request) -> AsyncGenerator[AsyncSession, None]:
+	async with request.app.state.session() as ses:
+		ses: AsyncSession
+		async with ses.begin():
+			yield ses

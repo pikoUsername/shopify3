@@ -11,7 +11,12 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[3]))
 
 from app.db.engine import Meta
-from app.db.repositories import user  # noqa
+from app.db.repositories.permissions import Permissions
+from app.db.repositories.user import Users
+from app.db.repositories.transaction import MoneyTransaction
+from app.db.repositories.seller import Seller
+from app.db.repositories.wallet import Wallet
+from app.db.repositories.groups import Groups
 from app.core.config import get_app_settings
 
 load_dotenv()

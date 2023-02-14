@@ -10,48 +10,52 @@ from app.core.settings.base import BaseAppSettings
 
 
 class AppSettings(BaseAppSettings):
-    debug: bool = False
-    docs_url: str = "/docs"
-    openapi_prefix: str = ""
-    openapi_url: str = "/openapi.json"
-    redoc_url: str = "/redoc"
-    title: str = "FastAPI example application"
-    version: str = "0.0.0"
+	debug: bool = False
+	docs_url: str = "/docs"
+	openapi_prefix: str = ""
+	openapi_url: str = "/openapi.json"
+	redoc_url: str = "/redoc"
+	title: str = "FastAPI example application"
+	version: str = "0.0.0"
 
-    database_url: PostgresDsn
-    max_connection_count: int = 10
-    min_connection_count: int = 10
+	database_url: PostgresDsn
+	max_connection_count: int = 10
+	min_connection_count: int = 10
 
-    secret_key: SecretStr
+	redis_password: SecretStr
+	redis_host: str = "localhost"
+	redis_port: int = "6379"
 
-    api_prefix: str = "/api"
+	secret_key: SecretStr
 
-    jwt_token_prefix: str = "Token"
+	api_prefix: str = "/api"
 
-    allowed_hosts: List[str] = ["*"]
+	jwt_token_prefix: str = "Token"
 
-    logging_level: int = logging.INFO
-    loggers: Tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
+	allowed_hosts: List[str] = ["*"]
 
-    class Config:
-        validate_assignment = True
+	logging_level: int = logging.INFO
+	loggers: Tuple[str, str] = ("uvicorn.asgi", "uvicorn.access")
 
-    @property
-    def fastapi_kwargs(self) -> Dict[str, Any]:
-        return {
-            "debug": self.debug,
-            "docs_url": self.docs_url,
-            "openapi_prefix": self.openapi_prefix,
-            "openapi_url": self.openapi_url,
-            "redoc_url": self.redoc_url,
-            "title": self.title,
-            "version": self.version,
-        }
+	class Config:
+		validate_assignment = True
 
-    def configure_logging(self) -> None:
-        logging.getLogger().handlers = [InterceptHandler()]
-        for logger_name in self.loggers:
-            logging_logger = logging.getLogger(logger_name)
-            logging_logger.handlers = [InterceptHandler(level=self.logging_level)]
+	@property
+	def fastapi_kwargs(self) -> Dict[str, Any]:
+		return {
+			"debug": self.debug,
+			"docs_url": self.docs_url,
+			"openapi_prefix": self.openapi_prefix,
+			"openapi_url": self.openapi_url,
+			"redoc_url": self.redoc_url,
+			"title": self.title,
+			"version": self.version,
+		}
 
-        logger.configure(handlers=[{"sink": sys.stderr, "level": self.logging_level}])
+	def configure_logging(self) -> None:
+		logging.getLogger().handlers = [InterceptHandler()]
+		for logger_name in self.loggers:
+			logging_logger = logging.getLogger(logger_name)
+			logging_logger.handlers = [InterceptHandler(level=self.logging_level)]
+
+		logger.configure(handlers=[{"sink": sys.stderr, "level": self.logging_level}])

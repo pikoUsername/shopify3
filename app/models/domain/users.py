@@ -1,24 +1,30 @@
-from typing import Optional
+from typing import Optional, List
 
 from app.models.common import DateTimeModelMixin, IDModelMixin
+from app.models.domain.groups import GroupInDB
+from app.models.domain.perms import PermissionsInDB
 from app.models.domain.rwmodel import RWModel
 from app.services import security
 
 
 class User(RWModel):
-    username: str
-    email: str
-    bio: str = ""
-    image: Optional[str] = None
+	username: str
+	email: str
+	bio: str = ""
+	image: Optional[str] = None
+	lastname: Optional[str] = ""
+	address: Optional[str] = ""
 
 
 class UserInDB(IDModelMixin, DateTimeModelMixin, User):
-    salt: str = ""
-    encrypted_password: str = ""
+	permissions: List[PermissionsInDB]
+	groups: List[GroupInDB]
+	salt: str = ""
+	encrypted_password: str = ""
 
-    def check_password(self, password: str) -> bool:
-        return security.verify_password(self.salt + password, self.encrypted_password)
+	def check_password(self, password: str) -> bool:
+		return security.verify_password(self.salt + password, self.encrypted_password)
 
-    def change_password(self, password: str) -> None:
-        self.salt = security.generate_salt()
-        self.encrypted_password = security.get_password_hash(self.salt + password)
+	def change_password(self, password: str) -> None:
+		self.salt = security.generate_salt()
+		self.encrypted_password = security.get_password_hash(self.salt + password)

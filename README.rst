@@ -144,7 +144,7 @@ Application parts are:
     ├── api              - web related stuff.
     │   ├── dependencies - dependencies for routes definition.
     │   ├── errors       - definition of error handlers.
-    │   └── routes       - web routes.
+    │   └── routes       - web routes.
     ├── core             - application configuration, startup events, logging.
     ├── db               - db related stuff.
     │   ├── migrations   - manually written alembic migrations.
