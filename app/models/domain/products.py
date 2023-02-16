@@ -3,6 +3,7 @@ from pydantic import Field
 from .comments import CommentInDB
 from .rwmodel import RWModel
 from .seller import SellerInDB
+from .tag import TagsInDB
 from .text_entities import TextEntitiesInDB
 from ..common import IDModelMixin, DateTimeModelMixin
 

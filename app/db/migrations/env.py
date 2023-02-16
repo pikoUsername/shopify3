@@ -3,21 +3,17 @@ import pathlib
 import sys
 from logging.config import fileConfig
 
-from dotenv import load_dotenv
 from alembic import context
+from dotenv import load_dotenv
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+# i made it bc alembic will not allow project files
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[3]))
 
-from app.db.engine import Meta
-from app.db.repositories.permissions import Permissions
-from app.db.repositories.user import Users
-from app.db.repositories.transaction import MoneyTransaction
-from app.db.repositories.seller import Seller
-from app.db.repositories.wallet import Wallet
-from app.db.repositories.groups import Groups
-from app.core.config import get_app_settings
+from app.db.engine import Meta # noqa
+from app.db.repositories.models import *  # noqa
+from app.core.config import get_app_settings # noqa
 
 load_dotenv()
 
@@ -26,7 +22,6 @@ config = context.config
 if config.config_file_name is not None:
 	fileConfig(config.config_file_name)
 
-# and using their metadata
 target_metadata = Meta
 
 postgres_url = get_app_settings().database_url

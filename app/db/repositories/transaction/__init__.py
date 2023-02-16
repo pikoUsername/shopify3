@@ -1,4 +1,4 @@
 from .model import MoneyTransaction
-# from .crud import MoneyCRUD
+from .crud import TransactionCRUD
 
-__all__ = "MoneyTransaction" ,
+__all__ = "MoneyTransaction", "TransactionCRUD"

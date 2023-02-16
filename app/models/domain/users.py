@@ -1,9 +1,14 @@
+from datetime import datetime
 from typing import Optional, List
+
+from pydantic import Field
 
 from app.models.common import DateTimeModelMixin, IDModelMixin
 from app.models.domain.groups import GroupInDB
 from app.models.domain.perms import PermissionsInDB
 from app.models.domain.rwmodel import RWModel
+from app.models.domain.seller import SellerInDB
+from app.models.domain.product_lists import ProductListInDB
 from app.services import security
 
 
@@ -14,10 +19,15 @@ class User(RWModel):
 	image: Optional[str] = None
 	lastname: Optional[str] = ""
 	address: Optional[str] = ""
+	is_deactivated: bool = False
+	product_lists: list[ProductListInDB] = []
+	is_stuff: bool = False
+	last_online: datetime = Field(default_factory=datetime.now)
 
 
 class UserInDB(IDModelMixin, DateTimeModelMixin, User):
 	permissions: List[PermissionsInDB]
+	seller: SellerInDB
 	groups: List[GroupInDB]
 	salt: str = ""
 	encrypted_password: str = ""

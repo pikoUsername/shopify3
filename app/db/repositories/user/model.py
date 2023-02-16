@@ -32,6 +32,7 @@ class Users(BaseModel):
 	groups = relationship("Groups", back_populates="users", secondary=UserToGroups)
 	seller = relationship("Seller", back_populates="users")
 	is_deactivated = sa.Column(sa.Boolean)
+	product_lists = relationship("ProductLists", back_populates="users")  # 1:M
 
 	def __init__(self, password=None, password_hash=None, salt=None, **kwargs) -> None:
 		if salt is None:
