@@ -1,14 +1,14 @@
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
 from app.api.dependencies.authentication import get_current_user_authorizer
 from app.api.dependencies.database import get_connection
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
-from app.db.repositories.user import UserCrud
-from app.models.domain.users import User as UserPublic
+from app.db.repositories.user import UserCrud, Users
+from app.models.domain.users import User as UserPublic, User
 from app.models.schemas.users import UserInResponse, UserInUpdate, UserWithToken
 from app.resources import strings
 from app.services import jwt
@@ -23,6 +23,11 @@ async def retrieve_user_profile(
 		session: AsyncSession = Depends(get_connection)
 ) -> UserPublic:
 	user = await UserCrud.get_by_username(session, username)
+	if not user:
+		raise HTTPException(
+			status_code=HTTP_404_NOT_FOUND,
+			detail=strings.USER_DOES_NOT_EXIST_ERROR,
+		)
 	return UserPublic(
 		username=user.username,
 		email=user.email,
@@ -32,9 +37,9 @@ async def retrieve_user_profile(
 	)
 
 
-@router.get("", response_model=UserInResponse, name="users:get-current-user")
+@router.get("/", response_model=UserInResponse, name="users:get-current-user")
 async def retrieve_current_user(
-		user: UserPublic = Depends(get_current_user_authorizer()),
+		user: Users = Depends(get_current_user_authorizer()),
 		settings: AppSettings = Depends(get_app_settings),
 ) -> UserInResponse:
 	token = jwt.create_access_token_for_user(

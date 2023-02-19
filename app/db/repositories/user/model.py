@@ -9,7 +9,6 @@ from sqlalchemy.orm import relationship
 
 from app.db.repositories.base import BaseModel
 from app.db.repositories.helpers import UserToGroups
-from app.models.domain.perms import PermissionsInDB
 from app.services.security import verify_password, get_password_hash, generate_salt
 
 
@@ -17,9 +16,10 @@ class Users(BaseModel):
 	__tablename__ = "users"
 
 	username = sa.Column(
-		sa.String(255), index=True, primary_key=True, nullable=False, unique=True)
+		sa.String(255), index=True, primary_key=True)
 	uuid = sa.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 	lastname = sa.Column(sa.String(255))
+	fullname = sa.Column(sa.String(255))  # format: {surname} {name}
 	last_online = sa.Column(sa.DateTime(), server_default=func.now())
 	email = sa.Column(sa.String(320), index=True, nullable=False)
 	is_stuff = sa.Column(sa.Boolean, default=False)
@@ -33,6 +33,7 @@ class Users(BaseModel):
 	seller = relationship("Seller", back_populates="users")
 	is_deactivated = sa.Column(sa.Boolean)
 	product_lists = relationship("ProductLists", back_populates="users")  # 1:M
+	phone_number = sa.Column(sa.String(18))
 
 	def __init__(self, password=None, password_hash=None, salt=None, **kwargs) -> None:
 		if salt is None:
@@ -43,7 +44,10 @@ class Users(BaseModel):
 
 		super().__init__(encrypted_password=password_hash, **kwargs)
 
-	def change_name(self, username):
+	def change_fullname(self, surname: str, name: str) -> str:
+		self.fullname = f"{surname} {name}"
+
+	def change_name(self, username: str) -> None:
 		"""
 		Изменяет только lastname так как username является ID юзера
 		"""
@@ -52,7 +56,7 @@ class Users(BaseModel):
 		self.lastname = username
 
 	@property
-	def password(self):
+	def password(self) -> None:
 		raise AttributeError("Password is write only")
 
 	@password.setter

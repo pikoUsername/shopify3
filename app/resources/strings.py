@@ -17,9 +17,8 @@ USER_IS_ALREADY_FOLLOWED = "you follow this user already"
 WRONG_TOKEN_PREFIX = "unsupported authorization type"  # noqa: S105
 MALFORMED_PAYLOAD = "could not validate credentials"
 
-ARTICLE_IS_ALREADY_FAVORITED = "you are already marked this articles as favorite"
-ARTICLE_IS_NOT_FAVORITED = "article is not favorited"
-
 COMMENT_DOES_NOT_EXIST = "comment does not exist"
 
 AUTHENTICATION_REQUIRED = "authentication required"
+
+NOT_ENOUGH_PERMISSIONS = "not sufficient amount of permissions"

@@ -14,12 +14,12 @@ class Wallet(TimedModel):
 	is_frozen = sa.Column(sa.Boolean, default=False)
 
 	@property
-	def money(self):
+	def money(self) -> int:
 		return self._money
 
 	@money.setter
-	def money(self):
+	def money(self) -> None:
 		raise ValueError("Not allowed to set money field")
 
 	def add_money(self, money: int) -> MoneyTransaction:
-		pass
+		pass  # TODO

@@ -24,19 +24,19 @@ async def signup(
 		user_login: UserInCreate = Body(..., embed=True, alias="user"),
 		settings: AppSettings = Depends(get_app_settings),
 		session: AsyncSession = Depends(get_connection),
-):
+) -> UserInResponse:
 	"""
 	Gives token using information that user gave
 
 	:return:
 	"""
-	if await auth.check_email_is_taken(user_login.email):
+	if await auth.check_email_is_taken(session, user_login.email):
 		raise HTTPException(
 			status_code=HTTP_400_BAD_REQUEST,
 			detail=strings.EMAIL_TAKEN,
 		)
 
-	if await auth.check_username_is_taken(user_login.username):
+	if await auth.check_username_is_taken(session, user_login.username):
 		raise HTTPException(
 			status_code=HTTP_400_BAD_REQUEST,
 			detail=strings.USERNAME_TAKEN,

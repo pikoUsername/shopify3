@@ -56,7 +56,7 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 	@classmethod
 	async def create(cls, db: AsyncSession, obj_in: CreateSchemaType) -> ModelType:
 		obj_in_data = jsonable_encoder(obj_in, exclude_unset=True)
-		db_obj = cls.model(**obj_in_data)  # type: ignore
+		db_obj = cls.model(**obj_in_data)
 		db.add(db_obj)
 		await db.commit()
 		await db.refresh(db_obj)  # is it detached?
@@ -67,11 +67,11 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 			cls,
 			db: AsyncSession,
 			obj_in: CreateSchemaType,
-			relationships: Dict[str, Union[List[sa.Table], sa.Table]]
+			relationships: Dict[str, Union[List[sa.Table], sa.Table]],
 	) -> ModelType:
 		obj_in_data = jsonable_encoder(obj_in, exclude_unset=True)
-		db_obj = cls.model(**obj_in_data)  # type: ignore
-		for key, value in relationships:
+		db_obj = cls.model(**obj_in_data)
+		for key, value in relationships.items():
 			if isinstance(value, list):
 				rel = getattr(db_obj, key)
 				for val in value:
