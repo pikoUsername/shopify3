@@ -1,3 +1,4 @@
+import typing
 import asyncio
 import functools
 
@@ -8,7 +9,7 @@ def cache_result(
 	id: str = "id",
 	update_argument: str = None,
 	delete: bool = False,
-) -> callable:
+) -> typing.Callable:
 	"""
 	Использвание:
 	@cache_result()
@@ -42,7 +43,7 @@ def cache_result(
 
 		@functools.wraps(func)
 		async def inner(*args, **kwargs):
-			key = kwargs.get(id)
+			key = str(kwargs.get(id))
 			if cached_val := await storage.get(key) and not update_argument or delete:
 				return cached_val
 			if asyncio.iscoroutinefunction(func):

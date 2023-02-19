@@ -19,6 +19,10 @@ class CacheInterface(abc.ABC):
 	async def delete(self, key: str, return_: bool = False) -> Any:
 		pass
 
+	@abc.abstractmethod
+	async def close(self) -> None:
+		pass
+
 	async def get_or_set(self, key: str, value: Any) -> Tuple[Any, bool]:
 		if v := await self.get(key):
 			return v, False
@@ -49,7 +53,7 @@ class RedisCache(CacheInterface):
 	async def close(self) -> None:
 		await super().close()
 
-	def __getattr__(self, item: str):
+	def __getattr__(self, item: str) -> Any:
 		# to let dev use cacher like this storage.hset("kkk", "1231")
 		# instead of storage.conn.hset("hhh", "1231")
 		# which is not so good
