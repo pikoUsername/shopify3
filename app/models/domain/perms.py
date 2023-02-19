@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from app.models.common import IDModelMixin, DateTimeModelMixin
 from app.models.domain.rwmodel import RWModel

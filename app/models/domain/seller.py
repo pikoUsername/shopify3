@@ -1,9 +1,13 @@
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from pydantic import Field
 
 from .rwmodel import RWModel
 from ..common import DateTimeModelMixin, IDModelMixin
+
+
+if TYPE_CHECKING:
+	from .products import ProductInDB
 
 
 class SellerInDB(RWModel, IDModelMixin, DateTimeModelMixin):
@@ -12,4 +16,4 @@ class SellerInDB(RWModel, IDModelMixin, DateTimeModelMixin):
 	country: str
 	bio: str
 	is_activated: bool = Field(default=True)
-	is_blocked = Field(default=False)
+	is_blocked: bool = Field(default=False)
