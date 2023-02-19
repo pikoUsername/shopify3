@@ -2,14 +2,15 @@ from os import environ
 
 import pytest
 from asgi_lifespan import LifespanManager
-from asyncpg.pool import Pool
 from fastapi import FastAPI
 from httpx import AsyncClient
 
-from app.db.repositories.users import UsersRepository
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db.repositories.user import UserCrud, Users
 from app.models.domain.users import UserInDB
+from app.models.schemas.users import UserInCreate
 from app.services import jwt
-from tests.fake_asyncpg_pool import FakeAsyncPGPool
 
 environ["APP_ENV"] = "test"
 
@@ -24,13 +25,14 @@ def app() -> FastAPI:
 @pytest.fixture
 async def initialized_app(app: FastAPI) -> FastAPI:
     async with LifespanManager(app):
-        app.state.pool = await FakeAsyncPGPool.create_pool(app.state.pool)
-        yield app
+        return app
 
 
 @pytest.fixture
-def pool(initialized_app: FastAPI) -> Pool:
-    return initialized_app.state.pool
+def db(initialized_app: FastAPI) -> AsyncSession:
+    async with initialized_app.state.session() as ses:
+        async with ses.begin():
+            return ses
 
 
 @pytest.fixture
@@ -54,11 +56,22 @@ def authorization_prefix() -> str:
 
 
 @pytest.fixture
-async def test_user(pool: Pool) -> UserInDB:
-    async with pool.acquire() as conn:
-        return await UsersRepository(conn).create_user(
-            email="test@test.com", password="password", username="username"
-        )
+def test_user_schema() -> UserInDB:
+    return UserInDB(
+        username="TestUser",
+        email="TestUser",
+    )
+
+
+@pytest.fixture
+async def test_user(db: AsyncSession, test_user_schema: UserInDB) -> Users:
+    test_user_schema = UserInCreate(
+        username=test_user_schema.username,
+        email=test_user_schema.email,
+        passowrd="Test@password"
+    )
+
+    return await UserCrud.create(db, test_user_schema)
 
 
 @pytest.fixture
