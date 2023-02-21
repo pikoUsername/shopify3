@@ -9,7 +9,7 @@ class Wallet(TimedModel):
 	__tablename__ = "wallets"
 
 	_money = sa.Column(sa.DECIMAL, default=0)
-	current = sa.Column(sa.String(5))
+	current = sa.Column(sa.String(5))  # 3 length
 	transactions = relationship("MoneyTransaction", back_populates="wallets")
 	is_frozen = sa.Column(sa.Boolean, default=False)
 

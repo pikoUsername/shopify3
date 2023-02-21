@@ -85,7 +85,7 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 	@classmethod
 	async def update(
 			cls,
-			db,
+			db: AsyncSession,
 			db_obj: ModelType,
 			obj_in: Union[UpdateSchemaType, Dict[str, Any]]
 	) -> ModelType:

@@ -7,9 +7,9 @@ from app.models.common import IDModelMixin, DateTimeModelMixin
 
 
 if TYPE_CHECKING:
-	from app.models.domain.users import UserInDB
+	from app.models.domain.users import User
 
 
 class GroupInDB(RWModel, IDModelMixin, DateTimeModelMixin):
 	name: str = Field(...)
-	users: List["UserInDB"] = []
+	users: List["User"] = []

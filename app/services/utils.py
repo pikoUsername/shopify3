@@ -1,6 +1,7 @@
 import typing
 import asyncio
 import functools
+from typing import Any
 
 from app.db.engine import storage
 
@@ -9,7 +10,7 @@ def cache_result(
 	id: str = "id",
 	update_argument: str = None,
 	delete: bool = False,
-) -> typing.Callable:
+):
 	"""
 	Использвание:
 	@cache_result()
@@ -42,7 +43,7 @@ def cache_result(
 		"""
 
 		@functools.wraps(func)
-		async def inner(*args, **kwargs):
+		async def inner(*args, **kwargs) -> Any:
 			key = str(kwargs.get(id))
 			if cached_val := await storage.get(key) and not update_argument or delete:
 				return cached_val

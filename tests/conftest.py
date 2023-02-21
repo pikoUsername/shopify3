@@ -29,7 +29,7 @@ async def initialized_app(app: FastAPI) -> FastAPI:
 
 
 @pytest.fixture
-def db(initialized_app: FastAPI) -> AsyncSession:
+async def db(initialized_app: FastAPI) -> AsyncSession:
     async with initialized_app.state.session() as ses:
         async with ses.begin():
             return ses

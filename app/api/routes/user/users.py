@@ -17,7 +17,7 @@ from app.services.auth import check_email_is_taken, check_username_is_taken
 router = APIRouter()
 
 
-@router.get("/{username}", response_model=UserPublic, name="users:get-user-profile")
+@router.get("/{username}", name="users:get-user-profile")
 async def retrieve_user_profile(
 		username: str,
 		session: AsyncSession = Depends(get_connection)
@@ -37,7 +37,7 @@ async def retrieve_user_profile(
 	)
 
 
-@router.get("/", response_model=UserInResponse, name="users:get-current-user")
+@router.get("/", name="users:get-current-user")
 async def retrieve_current_user(
 		user: Users = Depends(get_current_user_authorizer()),
 		settings: AppSettings = Depends(get_app_settings),
@@ -57,7 +57,7 @@ async def retrieve_current_user(
 	)
 
 
-@router.put("", response_model=UserInResponse, name="users:update-current-user")
+@router.put("", name="users:update-current-user")
 async def update_current_user(
 		user_update: UserInUpdate = Body(..., embed=True, alias="user"),
 		current_user: UserPublic = Depends(get_current_user_authorizer()),

@@ -12,3 +12,7 @@ Meta = MetaData()
 Base = declarative_base(metadata=Meta)
 Session: sessionmaker = sessionmaker(expire_on_commit=True, class_=AsyncSession)  # noqa
 current_session = async_scoped_session(Session, asyncio.current_task)
+
+
+def get_db() -> AsyncSession:
+	return Session()

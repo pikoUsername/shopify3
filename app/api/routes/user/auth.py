@@ -19,7 +19,7 @@ router = APIRouter()
 	"/signup",
 	status_code=HTTP_201_CREATED,
 	name="auth:signup",
-	response_model=UserInResponse)
+)
 async def signup(
 		user_login: UserInCreate = Body(..., embed=True, alias="user"),
 		settings: AppSettings = Depends(get_app_settings),
@@ -61,7 +61,6 @@ async def signup(
 @router.post(
 	"/login",
 	name="auth:login",
-	response_model=UserInResponse,
 )
 async def login(
 		user_login: UserInLogin = Body(..., embed=True, alias="user"),

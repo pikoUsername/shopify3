@@ -49,8 +49,10 @@ class CheckPermission:
 		settings: AppSettings = Depends(get_app_settings),
 	) -> None:
 		"""
-		Will raise HTTPForbidden if user permissions not enough
-		to use this route
+		Will raise HTTPForbidden if user permissions not enough to use this route
+
+		* Note: for frontend part, if user is not authed and has anonymous status
+		  then redirect him to login page, and save first url somewhere
 
 		:param session:
 		:param user:
@@ -68,5 +70,5 @@ class CheckPermission:
 			if group.name != self.group:
 				raise not_enough_permissions
 
-		if not user.check_permissions(self._perm_code):
+		if not user.check_permissions(" ".join(self._perm_code)):
 			raise not_enough_permissions

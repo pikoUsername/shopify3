@@ -16,4 +16,3 @@ class Seller(TimedModel):
 	bio = sa.Column(sa.Text)
 	is_activated = sa.Column(sa.Boolean, default=True)
 	is_blocked = sa.Column(sa.Boolean, default=False)
-

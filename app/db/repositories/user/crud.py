@@ -18,17 +18,17 @@ class UserCrud(BaseCrud[Users, UserInCreate, UserInUpdate]):
 	model = Users
 
 	@classmethod
-	async def get_by_email(cls, db, email: str) -> Optional[Users]:  # noqa
+	async def get_by_email(cls, db: AsyncSession, email: str) -> Optional[Users]:  # noqa
 		return await db.execute(
 			sa.select(Users).where(Users.email == email).scalar())
 
 	@classmethod
-	async def get_by_username(cls, db, username: str) -> Optional[Users]:
+	async def get_by_username(cls, db: AsyncSession, username: str) -> Optional[Users]:
 		return await db.execute(
 			sa.select(cls.model).where(Users.username == username).scalar())
 
 	@classmethod
-	async def update_user(cls, db, db_user: User, current_user: UserInUpdate) -> Users:
+	async def update_user(cls, db: AsyncSession, schema_user: User, current_user: UserInUpdate) -> Users:
 		if isinstance(current_user, dict):
 			update_data = current_user
 		else:
@@ -37,7 +37,7 @@ class UserCrud(BaseCrud[Users, UserInCreate, UserInUpdate]):
 			hashed_password = get_password_hash(update_data["password"])
 			del update_data["password"]
 			update_data["password_hash"] = hashed_password
-		db_user = await cls.get_by_email(db, db_user.email)
+		db_user = await cls.get_by_email(db, schema_user.email)
 		return await super().update(db, db_obj=db_user, obj_in=update_data)
 
 	@classmethod

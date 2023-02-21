@@ -8,4 +8,5 @@ class Profile(RWModel, IDModelMixin, DateTimeModelMixin):
 	username: str
 	bio: str = ""
 	image: Optional[str] = None
-	following: bool = False
+	is_deactivated: bool = False
+	is_stuff: bool = False

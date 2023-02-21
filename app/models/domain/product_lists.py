@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from pydantic import Field
 
@@ -9,6 +9,6 @@ if TYPE_CHECKING:
 	from .products import ProductInDB
 
 
-class ProductListInDB(RWModel, IDModelMixin, DateTimeModelMixin):
+class ProductList(RWModel, IDModelMixin, DateTimeModelMixin):
 	name: str = Field(max_length=52)
-	products: list["ProductInDB"] = []
+	products: List["ProductInDB"] = []

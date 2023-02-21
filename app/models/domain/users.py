@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 	from app.models.domain.groups import GroupInDB
 	from app.models.domain.perms import PermissionsInDB
 	from app.models.domain.seller import SellerInDB
-	from app.models.domain.product_lists import ProductListInDB
+	from app.models.domain.product_lists import ProductList
 
 
 class User(RWModel):
@@ -22,8 +22,8 @@ class User(RWModel):
 	lastname: Optional[str] = ""
 	address: Optional[str] = ""
 	is_deactivated: bool = False
-	product_lists: List["ProductListInDB"] = []
-	phone_number: str = None
+	product_lists: List["ProductList"] = []
+	phone_number: str = ""
 	is_stuff: bool = False
 	last_online: datetime = Field(default_factory=datetime.now)
 

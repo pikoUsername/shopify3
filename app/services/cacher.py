@@ -1,7 +1,7 @@
 import abc
 import asyncio
 import functools
-from typing import Any, Tuple
+from typing import Any, Tuple, Optional
 
 from redis.asyncio import Redis
 
@@ -30,10 +30,10 @@ class CacheInterface(abc.ABC):
 
 
 class RedisCache(CacheInterface):
-	def __init__(self, conn: Redis = None, lazy=False) -> None:
+	def __init__(self, conn: Optional[Redis] = None, lazy: bool = False) -> None:
 		if conn is None and lazy is False:
 			raise ValueError("Connection argument is missing, lazy = False")
-		self.conn: Redis = conn
+		self.conn = conn
 
 	async def init(self, redis: Redis):
 		await redis.ping()

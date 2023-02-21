@@ -44,7 +44,7 @@ class Users(BaseModel):
 
 		super().__init__(encrypted_password=password_hash, **kwargs)
 
-	def change_fullname(self, surname: str, name: str) -> str:
+	def change_fullname(self, surname: str, name: str) -> None:
 		self.fullname = f"{surname} {name}"
 
 	def change_name(self, username: str) -> None:
