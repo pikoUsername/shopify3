@@ -1,6 +1,3 @@
-import sqlalchemy as sa
-from sqlalchemy.orm import relationship
-
 from app.db.repositories.helpers import CommentSection
 
 

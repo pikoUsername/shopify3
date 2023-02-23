@@ -7,6 +7,6 @@ from ..common import IDModelMixin, DateTimeModelMixin
 
 class TextEntitiesInDB(IDModelMixin, DateTimeModelMixin, RWModel):
 	type: TextEntitiesTypes
-	url: HttpUrl
+	url: HttpUrl = ""
 	offset: int
 	length: int
