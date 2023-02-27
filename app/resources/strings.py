@@ -22,3 +22,5 @@ COMMENT_DOES_NOT_EXIST = "comment does not exist"
 AUTHENTICATION_REQUIRED = "authentication required"
 
 NOT_ENOUGH_PERMISSIONS = "not sufficient amount of permissions"
+
+DUPLICATE_ERROR = "This {model} already exists, with id: {id}"

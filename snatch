@@ -29,3 +29,7 @@ Config, App, Session(sqla), и Шедулер(возможно), Либо сде
   то при импорте используй TYPE_CHECKING и под проверкой этой переменной
   импортируй типы. Источник - https://adamj.eu/tech/2021/05/13/python-type-hints-how-to-fix-circular-imports/
   и не забывай добавить ковычки, или добавить в начало файла from __future__ import annotations
+
+Что тут очень не тревиально так это обьевление моделей. Тут при церкулярном импорте моделей
+То делаешь то что сказано вот тут:
+https://stackoverflow.com/questions/74346565/fastapi-typeerror-issubclass-arg-1-must-be-a-class-with-modular-imports

@@ -30,11 +30,14 @@ class CheckPermission:
 		formates it into permission string that uses
 		:param group:
 		"""
-		self.permissions = permission.split()
 		if isinstance(model, sa.Table):
 			model = getattr(model, "__tablename__") or model.__name__
 		self.model = model
 		self._access_control = AccessControl(self.model)
+		if permission == "*":
+			self.permissions = self._access_control.all()
+		self.permissions = permission.split()
+
 		self._perm_code = self._access_control.format(*self.permissions)
 		if isinstance(group, Groups):
 			group = group.name

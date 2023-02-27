@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from app.models.domain.profiles import Profile
+from app.models.domain import Profile
 
 
 class ProfileInResponse(BaseModel):

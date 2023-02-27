@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING, List
 
 from pydantic import Field
@@ -15,10 +16,10 @@ if TYPE_CHECKING:
 
 class ProductInDB(IDModelMixin, DateTimeModelMixin, RWModel):
 	name: str = Field(max_length=92)
-	seller: "SellerInDB"
+	seller: SellerInDB
 	seller_id: int
-	comments: List["CommentInDB"] = []
-	tags: List["TagsInDB"] = []
+	comments: List[CommentInDB] = []
+	tags: List[TagsInDB] = []
 	watches: int
 	description: str
-	text_entities: List["TextEntitiesInDB"] = []
+	text_entities: List[TextEntitiesInDB] = []

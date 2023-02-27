@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING, List
 
 from pydantic import Field
@@ -11,4 +12,4 @@ if TYPE_CHECKING:
 
 class ProductList(RWModel, IDModelMixin, DateTimeModelMixin):
 	name: str = Field(max_length=52)
-	products: List["ProductInDB"] = []
+	products: List[ProductInDB] = []

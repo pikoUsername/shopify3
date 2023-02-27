@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.domain.comments import CommentInDB
 from app.models.schemas.comment import CommentInCreate
 from app.models.schemas.users import UserInCreate
-from app.services.text_entities import parse_text
+from app.services.text_entities import Parser
 from ..common import BaseCrud
 from .model import Comments
 
@@ -18,7 +18,7 @@ class CommentsCRUD(BaseCrud[Comments, CommentInCreate, CommentInDB]):
 	async def create(cls, db: AsyncSession, obj_in: CommentInCreate) -> Comments:
 		# filters garbage, and raises error if it contains unwanted html tags
 		# gives list of entities
-		text, entities = parse_text(obj_in.text)
+		entities = Parser().parse_entities(obj_in.text)
 		entities = await TextEntitiesCRUD.create_list(db, entities)
 		author, _ = await UserCrud.get_or_create(db, obj_in.author, id_name="username")  # noqa ignore, yeah
 		obj_in.text = ""

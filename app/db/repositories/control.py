@@ -8,13 +8,22 @@ class AccessControl:
 	def __init__(self, model_name: str):
 		self.model_name = model_name
 
-	@classmethod
-	def all(cls) -> List[str]:
-		return cls.format(*CONTROL_LIST)
+	def all(self) -> List[str]:
+		return self.format(*CONTROL_LIST)
 
 	def format(self, *args) -> List[str]:
-		if args not in CONTROL_LIST:
-			raise ValueError(
-				f"Your permissions keys {' '.join(*args)} does not match actual permissions keys")
+		try:
+			first_arg = args[0]
+		except IndexError:
+			pass
+		else:
+			if first_arg == "*":
+				return self.all()
+
+		for arg in args:
+			if arg not in CONTROL_LIST:
+				raise ValueError(
+					f"Your permissions keys {', '.join(args)} does not match actual permissions keys")
+
 		return [f"{perm}_{self.model_name}" for perm in args]
 

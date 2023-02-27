@@ -12,3 +12,11 @@ class TextEntitiesTypes(str, Enum):
 	pre = "pre"
 	text_link = "text_link"  # a tag
 	underline = "underline"
+
+
+class PermissionTypes(str, Enum):
+	edit = "edit"
+	delete = "delete"
+	read = "read"
+	create = "create"
+

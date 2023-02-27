@@ -13,6 +13,7 @@ from app import middlewares
 
 
 def get_application() -> FastAPI:
+
 	load_dotenv()
 	settings = get_app_settings()
 

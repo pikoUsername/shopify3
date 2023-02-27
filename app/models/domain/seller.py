@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List, TYPE_CHECKING
 
 from pydantic import Field
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
 
 class SellerInDB(RWModel, IDModelMixin, DateTimeModelMixin):
 	rating: int = Field(None)
-	products: List["ProductInDB"] = []
+	products: List[ProductInDB] = []
 	country: str
 	bio: str
 	is_activated: bool = Field(default=True)

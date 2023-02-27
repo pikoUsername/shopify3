@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List, TYPE_CHECKING
 
 from pydantic import Field
@@ -12,4 +13,4 @@ if TYPE_CHECKING:
 
 class GroupInDB(RWModel, IDModelMixin, DateTimeModelMixin):
 	name: str = Field(...)
-	users: List["User"] = []
+	users: List[User] = []

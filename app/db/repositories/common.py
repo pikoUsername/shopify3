@@ -1,12 +1,14 @@
-from typing import Generic, Type, TypeVar, List, Union, Dict, Any, Optional, Tuple, Iterator
+from typing import Generic, TypeVar, List, Union, Dict, Any, Optional, Iterator
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 import sqlalchemy as sa
 from loguru import logger
+from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.base import BaseModel as DBBaseModel
+
 
 ExModelType = TypeVar("ExModelType", bound=DBBaseModel)
 ModelType = TypeVar("ModelType", bound=DBBaseModel)
@@ -39,7 +41,16 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 	async def get_by_values(
 			cls, db: AsyncSession, values: list[Any], key: str = "id"
 	) -> Optional[Iterator[ModelType]]:
-		return await db.execute(sa.select(cls.model).filter_by(**{key: x for x in values}))
+		result = await db.execute(sa.select(cls.model).filter_by(**{key: x for x in values}))
+		return result.all()
+
+	@classmethod
+	async def get_by_kwargs(
+			cls, db: AsyncSession, **kwargs: Any
+	) -> Optional[ModelType]:
+		stmt = sa.select(cls.model).filter_by(**kwargs)
+		result: Result = await db.execute(stmt)
+		return result.scalar_one()
 
 	@classmethod
 	async def create_list(cls, db: AsyncSession, obj_in: List[CreateSchemaType]) -> List[ModelType]:
@@ -113,11 +124,3 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 		await db.delete(obj)
 		await db.commit()
 		return obj
-
-	@classmethod
-	async def get_or_create(
-			cls, db: AsyncSession, obj_in: CreateSchemaType, id_name: str = "id"
-	) -> Tuple[ModelType, bool]:
-		if group := await cls.get(db, getattr(obj_in, id_name)):
-			return group, False
-		return await cls.create(db, obj_in.copy(exclude={id_name})), True

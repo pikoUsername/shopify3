@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, List
+from __future__ import annotations
+from typing import List, TYPE_CHECKING
 import decimal
 
 from pydantic import Field
@@ -19,5 +20,5 @@ class Wallet(RWModel):
 class WalletInDB(RWModel, IDModelMixin, DateTimeModelMixin):
 	money: decimal.Decimal = decimal.Decimal(0)
 	current: str = Field(default="rub", max_length=4)
-	transactions: List["MoneyTransactionInDB"]
+	transactions: List[MoneyTransactionInDB]
 	is_frozen: bool = False

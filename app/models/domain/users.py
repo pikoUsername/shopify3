@@ -1,3 +1,4 @@
+from __future__ import annotations
 from datetime import datetime
 from typing import Optional, List, TYPE_CHECKING
 
@@ -22,16 +23,16 @@ class User(RWModel):
 	lastname: Optional[str] = ""
 	address: Optional[str] = ""
 	is_deactivated: bool = False
-	product_lists: List["ProductList"] = []
+	product_lists: List[ProductList] = []
 	phone_number: str = ""
 	is_stuff: bool = False
 	last_online: datetime = Field(default_factory=datetime.now)
 
 
 class UserInDB(IDModelMixin, DateTimeModelMixin, User):
-	permissions: List["PermissionsInDB"] = []
-	seller: "SellerInDB"
-	groups: List["GroupInDB"] = []
+	permissions: List[PermissionsInDB] = []
+	seller: SellerInDB
+	groups: List[GroupInDB] = []
 	salt: str = ""
 	encrypted_password: str = ""
 

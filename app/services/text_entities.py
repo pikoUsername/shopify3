@@ -1,10 +1,9 @@
 import re
 
-from typing import TYPE_CHECKING, List, Tuple, Dict
+from typing import List, Tuple, Dict
 from app.services.enums import TextEntitiesTypes
 
-if TYPE_CHECKING:
-	from app.models.domain.text_entities import TextEntitiesInDB
+from app.models.domain import TextEntitiesInDB
 
 # first list is aliases
 # second list is tag arguments
@@ -41,7 +40,7 @@ class Parser:
 		return False
 
 	def get_type_by_tag(self, tag: str) -> TextEntitiesTypes:
-		# does not check for any KeyError's, use after tag validated
+		# does not check for any KeyError's, use after tag is validated
 		return ALLOWED_TAGS[tag][2]
 
 	def parse_entities(self, text: str) -> List[TextEntitiesInDB]:
