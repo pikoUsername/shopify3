@@ -1,5 +1,5 @@
 from app.db.repositories.common import BaseCrud
-from app.models.domain.tag import TagsInDB
+from app.models.domain import TagsInDB
 
 from .model import Tags
 

@@ -1,4 +1,4 @@
-from app.models.domain.seller import SellerInDB
+from app.models.domain import SellerInDB
 from ..common import BaseCrud
 
 from .model import Seller

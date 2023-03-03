@@ -1,7 +1,7 @@
 from app.db.repositories.common import BaseCrud
 from app.db.repositories.permissions.model import Permissions
 
-from app.models.domain.perms import PermissionsInDB
+from app.models.domain import PermissionsInDB
 
 from app.db.repositories.user import Users
 

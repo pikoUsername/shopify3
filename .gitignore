@@ -21,7 +21,6 @@ sdist/
 var/
 venv/
 wheels/
-docs/
 *.egg-info/
 .installed.cfg
 *.egg

@@ -4,7 +4,7 @@ import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.common import BaseCrud
-from app.models.domain.users import User
+from app.models.domain import User
 from app.models.schemas.users import UserInCreate, UserInUpdate
 from app.services.security import get_password_hash, verify_password
 

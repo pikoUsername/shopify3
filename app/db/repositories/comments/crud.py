@@ -1,8 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.domain.comments import CommentInDB
+from app.models.domain import CommentInDB
 from app.models.schemas.comment import CommentInCreate
-from app.models.schemas.users import UserInCreate
 from app.services.text_entities import Parser
 from ..common import BaseCrud
 from .model import Comments

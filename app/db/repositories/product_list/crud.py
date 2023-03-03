@@ -1,4 +1,4 @@
-from app.models.domain.product_lists import ProductList
+from app.models.domain import ProductList
 from ..common import BaseCrud
 
 from .model import ProductLists

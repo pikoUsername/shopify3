@@ -1,13 +1,12 @@
 from __future__ import annotations
-from typing import List, ForwardRef, TYPE_CHECKING
+from typing import List, ForwardRef
 
 from pydantic import Field, BaseModel
 
 from app.models.common import IDModelMixin, DateTimeModelMixin
 
-if TYPE_CHECKING:
-	from app.models.domain.text_entities import TextEntitiesInDB
-	from app.models.domain.users import UserInDB
+from app.models.domain.text_entities import TextEntitiesInDB
+from app.models.domain.users import UserInDB
 
 
 class CommentSection(IDModelMixin, DateTimeModelMixin):

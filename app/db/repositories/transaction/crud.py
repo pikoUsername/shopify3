@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.domain.transaction import MoneyTransactionInDB
+from app.models.domain import MoneyTransactionInDB
 from ..common import BaseCrud
 
 from .model import MoneyTransaction

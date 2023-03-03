@@ -2,11 +2,11 @@ from typing import List, TYPE_CHECKING
 
 from .rwschema import RWSchema
 
-if TYPE_CHECKING:
-	from app.models.domain.comments import CommentInDB
-	from app.models.domain.seller import SellerInDB
-	from app.models.domain.tag import TagsInDB
-	from app.models.domain.text_entities import TextEntitiesInDB
+# if TYPE_CHECKING:
+from app.models.domain import CommentInDB
+from app.models.domain import SellerInDB
+from app.models.domain import TagsInDB
+from app.models.domain import TextEntitiesInDB
 
 
 class ProductInResponse(RWSchema):

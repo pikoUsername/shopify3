@@ -1,5 +1,7 @@
 # ПИЗДЕЦ ГОВНО, Я ЕБАЛ
 # https://stackoverflow.com/questions/74346565/fastapi-typeerror-issubclass-arg-1-must-be-a-class-with-modular-imports
+
+# FIXED, НЕ ТРОГАТЬ НЕ ТРОГАТЬ
 from .comments import CommentInDB
 from .groups import GroupInDB
 from .perms import PermissionsInDB
@@ -15,6 +17,7 @@ from .users import User, UserInDB
 from .wallet import Wallet, WalletInDB
 from .base import CommentSection
 
+CommentInDB.update_forward_refs(**locals())
 ProductList.update_forward_refs(**locals())
 ProductInDB.update_forward_refs(**locals())
 GroupInDB.update_forward_refs(**locals())

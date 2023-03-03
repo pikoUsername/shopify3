@@ -8,7 +8,7 @@ from app.api.dependencies.database import get_connection
 from app.core.config import get_app_settings
 from app.core.settings.app import AppSettings
 from app.db.repositories.user import UserCrud, Users
-from app.models.domain.users import User as UserPublic, User
+from app.models.domain import User as UserPublic
 from app.models.schemas.users import UserInResponse, UserInUpdate, UserWithToken
 from app.resources import strings
 from app.services import jwt

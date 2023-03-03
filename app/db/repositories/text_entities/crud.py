@@ -1,4 +1,4 @@
-from app.models.domain.text_entities import TextEntitiesInDB
+from app.models.domain import TextEntitiesInDB
 from ..common import BaseCrud
 
 from .model import TextEntity

@@ -1,28 +1,4 @@
-.. image:: ./.github/assets/logo.png
-
-|
-
-.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/API%20spec/badge.svg
-   :target: https://github.com/nsidnev/fastapi-realworld-example-app
-
-.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/Tests/badge.svg
-   :target: https://github.com/nsidnev/fastapi-realworld-example-app
-
-.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/Styles/badge.svg
-   :target: https://github.com/nsidnev/fastapi-realworld-example-app
-
-.. image:: https://codecov.io/gh/nsidnev/fastapi-realworld-example-app/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/nsidnev/fastapi-realworld-example-app
-
-.. image:: https://img.shields.io/github/license/Naereen/StrapDown.js.svg
-   :target: https://github.com/nsidnev/fastapi-realworld-example-app/blob/master/LICENSE
-
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/ambv/black
-
-.. image:: https://img.shields.io/badge/style-wemake-000000.svg
-   :target: https://github.com/wemake-services/wemake-python-styleguide
-
+Shopify3
 ----------
 
 **NOTE**: This repository is not actively maintained because this example is quite complete and does its primary goal - passing Conduit testsuite.

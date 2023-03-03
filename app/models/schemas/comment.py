@@ -1,5 +1,9 @@
+from typing import TYPE_CHECKING
+
 from .rwschema import RWSchema
-from ..domain.users import User
+
+if TYPE_CHECKING:
+	from app.models.domain import User
 
 
 class CommentInCreate(RWSchema):

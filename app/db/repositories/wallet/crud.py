@@ -1,4 +1,4 @@
-from app.models.domain.wallet import WalletInDB
+from app.models.domain import WalletInDB
 from ..common import BaseCrud
 
 from .model import Wallet
