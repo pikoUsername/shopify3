@@ -4,5 +4,10 @@ from app.models.common import IDModelMixin, DateTimeModelMixin
 from app.models.domain.rwmodel import RWModel
 
 
-class PermissionsInDB(IDModelMixin, DateTimeModelMixin, RWModel):
+class Permissions(RWModel):
+	name: str = Field(...)
 	code: str = Field(...)
+
+
+class PermissionsInDB(IDModelMixin, DateTimeModelMixin, Permissions):
+	pass

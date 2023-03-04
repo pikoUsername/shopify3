@@ -14,4 +14,4 @@ User -> Permissions
 
 ##### Где происходит аутентификация? 
 
-В роуте через dependency(required_permissions(Users, "delete edit create read all"))
+В роуте через dependency(CheckPermission("*", Users))

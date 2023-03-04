@@ -2,7 +2,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional, List, TYPE_CHECKING
 
-from pydantic import Field
+from pydantic import Field, EmailStr
 
 from app.models.common import DateTimeModelMixin, IDModelMixin
 from app.models.domain.rwmodel import RWModel
@@ -31,7 +31,7 @@ class User(RWModel):
 
 class UserInDB(IDModelMixin, DateTimeModelMixin, User):
 	permissions: List[PermissionsInDB] = []
-	seller: SellerInDB
+	seller: SellerInDB = None
 	groups: List[GroupInDB] = []
 	salt: str = ""
 	encrypted_password: str = ""

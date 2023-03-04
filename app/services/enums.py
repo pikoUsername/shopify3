@@ -20,3 +20,15 @@ class PermissionTypes(str, Enum):
 	read = "read"
 	create = "create"
 
+
+class GlobalPermissions(Enum):
+	anonymous = ""
+
+
+class GlobalGroups(Enum):
+	"""
+	Global groups format:
+	{name} = {permission_name}
+	permission name has to be valid
+	"""
+	default_user = "anonymous"

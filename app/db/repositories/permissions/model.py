@@ -9,4 +9,5 @@ class Permissions(BaseModel):
 	"""
 	__tablename__ = "permissions"
 
+	name = sa.Column(sa.String(255), primary_key=True)
 	code = sa.Column(sa.String(256), nullable=False)  # format: {model_name}_{permission}

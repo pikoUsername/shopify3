@@ -22,6 +22,9 @@ class CommentsCRUD(BaseCrud[Comments, CommentInCreate, CommentInDB]):
 		author, _ = await UserCrud.get_or_create(db, obj_in.author, id_name="username")  # noqa ignore, yeah
 		obj_in.text = ""
 		comment = await CommentsCRUD.create_with_relationship(
-			db, obj_in, {'entities': entities, 'author': author}
+			db,
+			obj_in,
+			entities=entities,
+			author=author,
 		)
 		return comment

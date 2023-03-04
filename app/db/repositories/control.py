@@ -1,7 +1,7 @@
 # acces control system
 from typing import List
 
-CONTROL_LIST = {"edit", "delete", "read", "create"}
+CONTROL_LIST = {"update", "delete", "read", "create"}  # DONT DARE TO CHANGE!!!!
 
 
 class AccessControl:

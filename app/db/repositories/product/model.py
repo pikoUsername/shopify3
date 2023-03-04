@@ -15,3 +15,4 @@ class Products(TimedModel):
 	watches = sa.Column(sa.Integer)
 	description = sa.Column(sa.Text)
 	text_entities = relationship("TextEntities", back_populates="products")  # 1:many for text
+	is_hidden = sa.Column(sa.Boolean, default=False)

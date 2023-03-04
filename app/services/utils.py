@@ -1,66 +1,20 @@
-import typing
-import asyncio
-import functools
-from typing import Any
+from typing import TypeVar, Type, List, Iterable
 
-from app.db.engine import storage
+import sqlalchemy as sa
+from pydantic import BaseModel
 
 
-def cache_result(
-	id: str = "id",
-	update_argument: str = None,
-	delete: bool = False,
-):
-	"""
-	Использвание:
-	@cache_result()
-	async def get(db, id: int = None):
-		return await db.get(id)  # THIS RESULT WILL BE CACHED
+T = TypeVar("T", bound=BaseModel)
 
-	Примечание что бы он работал нужен что бы название
-	primary key был указан явно в первом аргументе функции,
-	или соответствовал "id"
 
-	@cache_result(update_argument="value")
-	async def update(db, id: int = None, value):
-		x = db.update(id, value, return=True)
-		return x
+def convert_db_obj_to_model(db_obj: sa.Table, model: Type[T]) -> T:
+	return model.from_orm(db_obj)
 
-	Если update_argument not None or delete = True
-	то тогда при вызове функции с таким же айди
-	то он будет удалять эту запись из кеша.
 
-	:param ids:
-	:return:
-	"""
+def convert_list_obj_to_model(objects: List[sa.Table], model: Type[T]) -> Iterable[T]:
+	models = []
 
-	def wrapper(func):
-		"""
-		OMG TRIPLE WRAPPING!!!!
+	for obj in objects:
+		models.append(model.from_orm(obj))
 
-		:param func:
-		:return:
-		"""
-
-		@functools.wraps(func)
-		async def inner(*args, **kwargs) -> Any:
-			key = str(kwargs.get(id))
-			if cached_val := await storage.get(key) and not update_argument or delete:
-				return cached_val
-			if asyncio.iscoroutinefunction(func):
-				result = await func(*args, **kwargs)
-			else:
-				result = func(*args, **kwargs)
-			if delete:
-				await storage.delete(key)
-				return result
-			if update_argument is not None:
-				upd_val = kwargs.get(update_argument)
-				await storage.set(key, upd_val)
-			else:
-				await storage.set(key, result)
-			return result
-
-		return inner
-
-	return wrapper
+	return models

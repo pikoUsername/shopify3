@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.repositories.common import BaseCrud
 from app.models.domain import User
 from app.models.schemas.users import UserInCreate, UserInUpdate
+from app.services.enums import GlobalGroups, GlobalPermissions
 from app.services.security import get_password_hash, verify_password
 
 from .model import Users
@@ -13,19 +14,24 @@ from .model import Users
 
 __all__ = "UserCrud",
 
+from ..groups import GroupsCRUD
+from ..permissions import PermissionsCrud
+
 
 class UserCrud(BaseCrud[Users, UserInCreate, UserInUpdate]):
 	model = Users
 
 	@classmethod
 	async def get_by_email(cls, db: AsyncSession, email: str) -> Optional[Users]:  # noqa
-		return await db.execute(
-			sa.select(Users).where(Users.email == email).scalar())
+		result = await db.execute(
+			sa.select(Users).where(Users.email == email))
+		return result.scalar()
 
 	@classmethod
 	async def get_by_username(cls, db: AsyncSession, username: str) -> Optional[Users]:
-		return await db.execute(
-			sa.select(cls.model).where(Users.username == username).scalar())
+		result = await db.execute(
+			sa.select(cls.model).where(Users.username == username))
+		return result.scalar()
 
 	@classmethod
 	async def update_user(cls, db: AsyncSession, schema_user: User, current_user: UserInUpdate) -> Users:
@@ -51,4 +57,15 @@ class UserCrud(BaseCrud[Users, UserInCreate, UserInUpdate]):
 
 	@classmethod
 	async def create(cls, db: AsyncSession, obj_in: UserInCreate) -> Users:
-		pass
+		group = await GroupsCRUD.get_by_kwargs(db, name=GlobalGroups.anonymous)
+		perm = await PermissionsCrud.get_by_kwargs(db, name=GlobalPermissions.user_default)
+		user = await super().create_with_relationship(
+			db,
+			obj_in,
+			groups=[group],
+			seller=[],
+			permissions=[perm],
+			product_lists=[],
+		)
+
+		return user

@@ -23,4 +23,6 @@ AUTHENTICATION_REQUIRED = "authentication required"
 
 NOT_ENOUGH_PERMISSIONS = "not sufficient amount of permissions"
 
+# errors with model nor id
 DUPLICATE_ERROR = "This {model} already exists, with id: {id}"
+DOES_NOT_EXISTS = "{model} does not exists, with id: {id}"

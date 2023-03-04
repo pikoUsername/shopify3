@@ -13,4 +13,10 @@ current_session = async_scoped_session(Session, asyncio.current_task)
 
 
 def get_db() -> AsyncSession:
+	"""
+	You had to use get_db function
+	instead of directly using Session variable
+
+	:return:
+	"""
 	return Session()

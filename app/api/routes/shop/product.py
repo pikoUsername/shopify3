@@ -1,23 +1,23 @@
-from fastapi import APIRouter, Depends, Body, HTTPException
+from fastapi import APIRouter, Depends, Body, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies.database import get_connection
 from app.api.dependencies.permissions import CheckPermission
 from app.db.repositories.product import ProductsCRUD, Products
 from app.db.repositories.seller import SellerCRUD
-from app.models.schemas.product import ProductInResponse, ProductInCreate
-from app.resources.strings import DUPLICATE_ERROR
+from app.models.schemas.product import ProductInResponse, ProductInCreate, ProductInUpdate
 from app.services.text_entities import Parser
 from app.db.repositories.text_entities import TextEntitiesCRUD
+from app.resources import strings
 
 
 router = APIRouter()
 
 
 @router.post(
-	"/product/",
+	"/",
 	name="products:create-product",
-	dependencies=[Depends(CheckPermission("*", Products.__tablename__))]
+	dependencies=[Depends(CheckPermission("*", Products))]
 )
 async def create_product(
 		product_create: ProductInCreate = Body(..., embed=True, alias="product"),
@@ -28,7 +28,7 @@ async def create_product(
 	)
 	if product := await ProductsCRUD.get_by_kwargs(db, seller_id=seller.id, name=product_create.name):
 		raise HTTPException(
-			detail=DUPLICATE_ERROR.format(
+			detail=strings.DUPLICATE_ERROR.format(
 				model=Products.__tablename__,
 				id=product.id
 			),
@@ -44,3 +44,66 @@ async def create_product(
 		seller_id=seller.id,
 		text_entities=parsed_entities,
 	)
+
+
+@router.get(
+	"/{product_id}",
+	name="products:get-product",
+	dependencies=[Depends(CheckPermission("read", Products))]
+)
+async def get_product(
+		product_id: int,
+		db: AsyncSession = Depends(get_connection)
+) -> ProductInResponse:
+	product = await ProductsCRUD.get(db, product_id)
+	if not product:
+		raise HTTPException(
+			detail=strings.DOES_NOT_EXISTS.format(model=Products.__tablename__),
+			status_code=400,
+		)
+
+	return ProductInResponse(
+		name=product.name,
+		description=product.description,
+		seller_id=product.seller_id,
+		text_entities=product.text_entities,
+	)
+
+
+@router.put(
+	"/{product_id}",
+	name="products:update-product",
+	dependencies=[Depends(CheckPermission("update", Products))]
+)
+async def update_product(
+	product_id: int,
+	product_body: ProductInUpdate = Body(..., embed=True, alias="product"),
+	db: AsyncSession = Depends(get_connection)
+) -> ProductInResponse:
+	product = await ProductsCRUD.get(db, product_id)
+	if not product:
+		raise HTTPException(
+			detail=strings.DOES_NOT_EXISTS.format(model=Products.__tablename__),
+			status_code=400,
+		)
+
+	product = await ProductsCRUD.update(db, product, product_body)
+
+	return ProductInResponse(
+		name=product.name,
+		description=product.description,
+		seller_id=product.seller_id,
+		text_entities=product.text_entities
+	)
+
+
+@router.delete(
+	"/{product_id}",
+	name="products:delete-product",
+	dependencies=[Depends(CheckPermission("delete", Products))]
+)
+async def delete_product(
+		product_id: int,
+		db: AsyncSession = Depends(get_connection),
+) -> ProductInResponse:
+	pass

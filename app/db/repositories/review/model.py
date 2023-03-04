@@ -10,3 +10,4 @@ class Reviews(CommentSection):
 	__tablename__ = "reviews"
 
 	rating = sa.Column(sa.Integer)
+	is_hidden = sa.Column(sa.Boolean, default=False)

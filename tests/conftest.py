@@ -1,8 +1,10 @@
 from os import environ
 
+import sqlalchemy as sa
 import pytest
 from asgi_lifespan import LifespanManager
 from fastapi import FastAPI
+from pydantic import EmailStr
 from httpx import AsyncClient
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -59,7 +61,7 @@ def authorization_prefix() -> str:
 def test_user_schema() -> UserInDB:
     return UserInDB(
         username="TestUser",
-        email="TestUser",
+        email=EmailStr("TestUser@gmail.com"),
     )
 
 
@@ -67,11 +69,12 @@ def test_user_schema() -> UserInDB:
 async def test_user(db: AsyncSession, test_user_schema: UserInDB) -> Users:
     test_user_schema = UserInCreate(
         username=test_user_schema.username,
-        email=test_user_schema.email,
-        passowrd="Test@password"
+        email=EmailStr(test_user_schema.email),
+        password="Test@password",
     )
 
-    return await UserCrud.create(db, test_user_schema)
+    user, _ = await UserCrud.get_or_create(db, test_user_schema)
+    return user
 
 
 @pytest.fixture
@@ -88,3 +91,10 @@ def authorized_client(
         **client.headers,
     }
     return client
+
+
+@pytest.fixture
+def test_db_model() -> sa.Table:
+    return sa.Table(
+
+    )

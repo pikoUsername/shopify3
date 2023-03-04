@@ -95,5 +95,7 @@ class Users(BaseModel):
 		"""
 		Format: {model_name}_{permissions}
 		"""
+		if self.is_stuff:
+			return True
 		perms = self.get_all_permissions()
 		return code in perms

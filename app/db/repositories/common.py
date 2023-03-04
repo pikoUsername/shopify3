@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar, List, Union, Dict, Any, Optional, Iterator
+from typing import Generic, TypeVar, List, Union, Dict, Any, Optional, Iterator, Tuple
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -53,6 +53,14 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 		return result.scalar_one()
 
 	@classmethod
+	async def get_or_create(
+			cls, db: AsyncSession, obj_in: CreateSchemaType, id_name: str = "id"
+	) -> Tuple[ModelType, bool]:
+		if group := await cls.get(db, getattr(obj_in, id_name)):
+			return group, False
+		return await cls.create(db, obj_in.copy()), True
+
+	@classmethod
 	async def create_list(cls, db: AsyncSession, obj_in: List[CreateSchemaType]) -> List[ModelType]:
 		ret_models = []
 		for obj in obj_in:
@@ -78,7 +86,7 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 			cls,
 			db: AsyncSession,
 			obj_in: CreateSchemaType,
-			relationships: Dict[str, Union[List[sa.Table], sa.Table]],
+			**relationships: Union[List[sa.Table], sa.Table],
 	) -> ModelType:
 		obj_in_data = jsonable_encoder(obj_in, exclude_unset=True)
 		db_obj = cls.model(**obj_in_data)

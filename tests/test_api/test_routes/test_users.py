@@ -1,12 +1,13 @@
+# TODO
 import pytest
-from asyncpg.pool import Pool
 from fastapi import FastAPI
 from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app.db.repositories.users import UsersRepository
+from app.db.repositories.user import UserCrud
 from app.models.domain.users import UserInDB
-from app.models.schemas.users import UserInResponse
+from app.models.schemas.users import UserInResponse, UserInCreate
 
 pytestmark = pytest.mark.asyncio
 
@@ -23,7 +24,6 @@ def wrong_authorization_header(request) -> str:
 async def test_user_can_not_access_own_profile_if_not_logged_in(
     app: FastAPI,
     client: AsyncClient,
-    test_user: UserInDB,
     api_method: str,
     route_name: str,
 ) -> None:
@@ -73,8 +73,6 @@ async def test_user_can_retrieve_own_profile(
 async def test_user_can_update_own_profile(
     app: FastAPI,
     authorized_client: AsyncClient,
-    test_user: UserInDB,
-    token: str,
     update_value: str,
     update_field: str,
 ) -> None:
@@ -93,7 +91,7 @@ async def test_user_can_change_password(
     authorized_client: AsyncClient,
     test_user: UserInDB,
     token: str,
-    pool: Pool,
+    db: AsyncSession,
 ) -> None:
     response = await authorized_client.put(
         app.url_path_for("users:update-current-user"),
@@ -102,13 +100,9 @@ async def test_user_can_change_password(
     assert response.status_code == status.HTTP_200_OK
     user_profile = UserInResponse(**response.json())
 
-    async with pool.acquire() as connection:
-        users_repo = UsersRepository(connection)
-        user = await users_repo.get_user_by_username(
-            username=user_profile.user.username
-        )
+    user = await UserCrud.get_by_username(db, user_profile.user.username)
 
-    assert user.check_password("new_password")
+    assert user.verify_password("new_password")
 
 
 @pytest.mark.parametrize(
@@ -118,7 +112,7 @@ async def test_user_can_change_password(
 async def test_user_can_not_take_already_used_credentials(
     app: FastAPI,
     authorized_client: AsyncClient,
-    pool: Pool,
+    db: AsyncSession,
     token: str,
     credentials_part: str,
     credentials_value: str,
@@ -129,9 +123,7 @@ async def test_user_can_not_take_already_used_credentials(
         "email": "free_email@email.com",
     }
     user_dict.update({credentials_part: credentials_value})
-    async with pool.acquire() as conn:
-        users_repo = UsersRepository(conn)
-        await users_repo.create_user(**user_dict)
+    await UserCrud.create(db, UserInCreate(**user_dict))
 
     response = await authorized_client.put(
         app.url_path_for("users:update-current-user"),
