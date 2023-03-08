@@ -10,6 +10,6 @@ if TYPE_CHECKING:
 	from .products import ProductInDB
 
 
-class ProductList(RWModel, IDModelMixin, DateTimeModelMixin):
+class ProductListInDB(RWModel, IDModelMixin, DateTimeModelMixin):
 	name: str = Field(max_length=52)
 	products: List[ProductInDB] = []

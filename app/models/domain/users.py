@@ -2,7 +2,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional, List, TYPE_CHECKING
 
-from pydantic import Field, EmailStr
+from pydantic import Field
 
 from app.models.common import DateTimeModelMixin, IDModelMixin
 from app.models.domain.rwmodel import RWModel
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 	from app.models.domain.groups import GroupInDB
 	from app.models.domain.perms import PermissionsInDB
 	from app.models.domain.seller import SellerInDB
-	from app.models.domain.product_lists import ProductList
+	from app.models.domain.product_lists import ProductListInDB
 
 
 class User(RWModel):
@@ -23,7 +23,7 @@ class User(RWModel):
 	lastname: Optional[str] = ""
 	address: Optional[str] = ""
 	is_deactivated: bool = False
-	product_lists: List[ProductList] = []
+	product_lists: List[ProductListInDB] = []
 	phone_number: str = ""
 	is_stuff: bool = False
 	last_online: datetime = Field(default_factory=datetime.now)

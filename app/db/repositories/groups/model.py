@@ -1,13 +1,18 @@
+from typing import TYPE_CHECKING, List
+
 import sqlalchemy as sa
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 
 from app.db.repositories.base import BaseModel
-from app.db.repositories.helpers import UserToGroups
+from app.db.repositories.helpers import UserToGroups, PermissionsToGroups
+
+if TYPE_CHECKING:
+	from app.db.repositories.models import Permissions, Users
 
 
 class Groups(BaseModel):
 	__tablename__ = "groups"
 
-	permissions = relationship("Permissions", uselist=False, back_populates="groups")
-	name = sa.Column(sa.String(125), unique=True, primary_key=True, nullable=False)
-	users = relationship("Users", back_populates="groups", secondary=UserToGroups)
+	permissions: Mapped["Permissions"] = relationship(secondary=PermissionsToGroups)  # M:M
+	name = sa.Column(sa.String(125), primary_key=True)
+	users: Mapped[List["Users"]] = relationship(secondary=UserToGroups)  # M:M

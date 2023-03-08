@@ -1,15 +1,21 @@
 import datetime
 import uuid
-import typing
+from typing import List, Set, Optional, TYPE_CHECKING
 
 import sqlalchemy as sa
 from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 from app.db.repositories.base import BaseModel
 from app.db.repositories.helpers import UserToGroups
 from app.services.security import verify_password, get_password_hash, generate_salt
+
+if TYPE_CHECKING:
+	from app.db.repositories.permissions import Permissions
+	from app.db.repositories.groups import Groups
+	from app.db.repositories.seller import Seller
+	from app.db.repositories.product_list import ProductLists
 
 
 class Users(BaseModel):
@@ -22,17 +28,19 @@ class Users(BaseModel):
 	fullname = sa.Column(sa.String(255))  # format: {surname} {name}
 	last_online = sa.Column(sa.DateTime(), server_default=func.now())
 	email = sa.Column(sa.String(320), index=True, nullable=False)
-	is_stuff = sa.Column(sa.Boolean, default=False)
+	is_stuff: Mapped[bool] = mapped_column(default=False)
 	image_url = sa.Column(sa.String(256))
 	bio = sa.Column(sa.String(256))
 	address = sa.Column(sa.String(256))
 	encrypted_password = sa.Column(sa.String(300), nullable=False)
 	salt = sa.Column(sa.String(256), nullable=False)
-	permissions = relationship("Permissions", uselist=False, back_populates="users")
-	groups = relationship("Groups", back_populates="users", secondary=UserToGroups)
-	seller = relationship("Seller", back_populates="users")
-	is_deactivated = sa.Column(sa.Boolean)
-	product_lists = relationship("ProductLists", back_populates="users")  # 1:M
+	permission_id: Mapped[int] = mapped_column(sa.ForeignKey('permissions.id'))
+	permission: Mapped["Permissions"] = relationship(uselist=False)  # one to one
+	groups: Mapped[List["Groups"]] = relationship(back_populates="users", secondary=UserToGroups)  # M:M
+	seller_id: Mapped[Optional[int]] = mapped_column(sa.ForeignKey("sellers.id"))
+	seller: Mapped[Optional["Seller"]] = relationship(uselist=False, foreign_keys="Seller.user_id")  # 1:1
+	is_deactivated: Mapped[Optional[bool]] = mapped_column()
+	product_lists: Mapped[List["ProductLists"]] = relationship()  # 1:M
 	phone_number = sa.Column(sa.String(18))
 
 	def __init__(self, password=None, password_hash=None, salt=None, **kwargs) -> None:
@@ -69,15 +77,15 @@ class Users(BaseModel):
 	async def update_last_online(self) -> None:
 		self.last_online = datetime.datetime.now()
 
-	def get_group_perms(self) -> typing.Set[str]:
-		result: typing.Set[str] = set()
+	def get_group_perms(self) -> Set[str]:
+		result: Set[str] = set()
 		for group in self.groups:
 			for perm in group.permissions:
 				result.add(perm.code.split())
 
 		return result
 
-	def get_permissions(self) -> typing.Set[str]:
+	def get_permissions(self) -> Set[str]:
 		result = set()
 
 		for perm in self.permissions:
@@ -85,7 +93,7 @@ class Users(BaseModel):
 
 		return result
 
-	def get_all_permissions(self) -> typing.Set[str]:
+	def get_all_permissions(self) -> Set[str]:
 		return {
 			*self.get_group_perms(),
 			*self.get_permission(),

@@ -28,6 +28,7 @@ class GroupsCRUD(BaseCrud[Groups, GroupInDB, GroupInDB]):
 
 		if " " in group_enum.value and len(group_enum.value.split()) > 1:
 			# better don't look at this...
+			# permissions split up by spaces
 			permission_names = group_enum.value.split()
 			perms = []
 

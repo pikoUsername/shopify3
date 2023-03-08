@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from loguru import logger
 
 from app.core.settings.app import AppSettings
-from app.db.events import close_db_connection, connect_to_db
+from app.db.events import close_db_connection, connect_to_db, create_default_permissions, create_default_groups
 
 
 def create_start_app_handler(
@@ -13,6 +13,8 @@ def create_start_app_handler(
 ) -> Callable:  # type: ignore
 	async def start_app() -> None:
 		await connect_to_db(app, settings)
+		await create_default_permissions(app)
+		await create_default_groups(app)
 
 	return start_app
 

@@ -10,7 +10,7 @@ from app.models.domain import TextEntitiesInDB
 
 class ProductInResponse(RWSchema):
 	name: str
-	seller_id: int
+	seller: SellerInDB
 	comments: List[CommentInDB] = []
 	tags: List[TagsInDB] = []
 	watches: int = 0

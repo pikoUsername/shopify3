@@ -5,11 +5,12 @@ from app.api.dependencies.database import get_connection
 from app.api.dependencies.permissions import CheckPermission
 from app.db.repositories.product import ProductsCRUD, Products
 from app.db.repositories.seller import SellerCRUD
+from app.models.domain import SellerInDB
 from app.models.schemas.product import ProductInResponse, ProductInCreate, ProductInUpdate
 from app.services.text_entities import Parser
 from app.db.repositories.text_entities import TextEntitiesCRUD
 from app.resources import strings
-
+from app.services.utils import convert_db_obj_to_model
 
 router = APIRouter()
 
@@ -37,11 +38,11 @@ async def create_product(
 	parsed_entities = Parser().parse_entities(product_create.description)
 	parsed_entities = await TextEntitiesCRUD.create_list(db, parsed_entities)
 	relations = {"seller": seller, "comments": [], "text_entities": parsed_entities}
-	product = await ProductsCRUD.create_with_relationship(db, product_create, relations)
+	product = await ProductsCRUD.create_with_relationship(db, product_create, **relations)
 	return ProductInResponse(
 		name=product.name,
 		description=product.description,
-		seller_id=seller.id,
+		seller=convert_db_obj_to_model(seller, SellerInDB),
 		text_entities=parsed_entities,
 	)
 
@@ -65,7 +66,7 @@ async def get_product(
 	return ProductInResponse(
 		name=product.name,
 		description=product.description,
-		seller_id=product.seller_id,
+		seller=convert_db_obj_to_model(product.seller, SellerInDB),
 		text_entities=product.text_entities,
 	)
 
@@ -92,7 +93,7 @@ async def update_product(
 	return ProductInResponse(
 		name=product.name,
 		description=product.description,
-		seller_id=product.seller_id,
+		seller=convert_db_obj_to_model(product.seller, SellerInDB),
 		text_entities=product.text_entities
 	)
 
@@ -105,5 +106,5 @@ async def update_product(
 async def delete_product(
 		product_id: int,
 		db: AsyncSession = Depends(get_connection),
-) -> ProductInResponse:
+) -> dict:
 	pass

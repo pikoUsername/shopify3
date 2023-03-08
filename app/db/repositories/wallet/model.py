@@ -10,7 +10,7 @@ class Wallet(TimedModel):
 
 	_money = sa.Column(sa.DECIMAL, default=0)
 	current = sa.Column(sa.String(5))  # 3 length
-	transactions = relationship("MoneyTransaction", back_populates="wallets")
+	transactions = relationship("MoneyTransaction", back_populates="wallet")
 	is_frozen = sa.Column(sa.Boolean, default=False)
 
 	@property

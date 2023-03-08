@@ -5,6 +5,7 @@ from pydantic import BaseModel
 import sqlalchemy as sa
 from loguru import logger
 from sqlalchemy.engine import Result
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.base import BaseModel as DBBaseModel
@@ -29,7 +30,8 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
 	@classmethod
 	async def get(cls, db: AsyncSession, id: Any) -> Optional[ModelType]:
-		return await db.execute(sa.select(cls.model).filter(cls.model.id == id).first())
+		result = await db.execute(sa.select(cls.model).where(cls.model.id == id))
+		return result.first()
 
 	@classmethod
 	async def get_multi(
@@ -41,7 +43,8 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 	async def get_by_values(
 			cls, db: AsyncSession, values: list[Any], key: str = "id"
 	) -> Optional[Iterator[ModelType]]:
-		result = await db.execute(sa.select(cls.model).filter_by(**{key: x for x in values}))
+		stmt = sa.select(cls.model).filter_by(**{key: x for x in values})
+		result = await db.execute(stmt)
 		return result.all()
 
 	@classmethod
@@ -49,16 +52,19 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 			cls, db: AsyncSession, **kwargs: Any
 	) -> Optional[ModelType]:
 		stmt = sa.select(cls.model).filter_by(**kwargs)
-		result: Result = await db.execute(stmt)
+		result = await db.execute(stmt)
 		return result.scalar_one()
 
 	@classmethod
 	async def get_or_create(
 			cls, db: AsyncSession, obj_in: CreateSchemaType, id_name: str = "id"
 	) -> Tuple[ModelType, bool]:
-		if group := await cls.get(db, getattr(obj_in, id_name)):
+		kw = {id_name: getattr(obj_in, id_name)}
+		try:
+			group = await cls.get_by_kwargs(db, **kw)
 			return group, False
-		return await cls.create(db, obj_in.copy()), True
+		except NoResultFound:
+			return await cls.create(db, obj_in.copy()), True
 
 	@classmethod
 	async def create_list(cls, db: AsyncSession, obj_in: List[CreateSchemaType]) -> List[ModelType]:
@@ -86,9 +92,12 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 			cls,
 			db: AsyncSession,
 			obj_in: CreateSchemaType,
+			additional_opts: Dict[str, Any] = None,
 			**relationships: Union[List[sa.Table], sa.Table],
 	) -> ModelType:
-		obj_in_data = jsonable_encoder(obj_in, exclude_unset=True)
+		obj_in_data: dict = jsonable_encoder(obj_in, exclude_unset=True)
+		if additional_opts:
+			obj_in_data.update(**additional_opts)
 		db_obj = cls.model(**obj_in_data)
 		for key, value in relationships.items():
 			if isinstance(value, list):

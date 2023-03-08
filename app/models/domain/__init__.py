@@ -6,7 +6,7 @@ from .comments import CommentInDB
 from .groups import GroupInDB
 from .perms import PermissionsInDB
 from .products import ProductInDB
-from .product_lists import ProductList
+from .product_lists import ProductListInDB
 from .review import ReviewInDB
 from .profiles import Profile
 from .seller import SellerInDB
@@ -18,7 +18,7 @@ from .wallet import Wallet, WalletInDB
 from .base import CommentSection
 
 CommentInDB.update_forward_refs(**locals())
-ProductList.update_forward_refs(**locals())
+ProductListInDB.update_forward_refs(**locals())
 ProductInDB.update_forward_refs(**locals())
 GroupInDB.update_forward_refs(**locals())
 Wallet.update_forward_refs(**locals())
