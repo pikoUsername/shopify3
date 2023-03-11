@@ -2,17 +2,17 @@ from typing import TypeVar, Type, List, Iterable, Dict, Any
 
 import sqlalchemy as sa
 from pydantic import BaseModel
-from fastapi.encoders import jsonable_encoder
 
 
 T = TypeVar("T", bound=BaseModel)
+ST = TypeVar("ST", bound=sa.Table)
 
 
-def convert_db_obj_to_model(db_obj: sa.Table, model: Type[T]) -> T:
+def convert_db_obj_to_model(db_obj: ST, model: Type[T]) -> T:
 	return model.from_orm(db_obj)
 
 
-def convert_list_obj_to_model(objects: List[sa.Table], model: Type[T]) -> Iterable[T]:
+def convert_list_obj_to_model(objects: List[ST], model: Type[T]) -> Iterable[T]:
 	models = []
 
 	for obj in objects:
@@ -21,7 +21,7 @@ def convert_list_obj_to_model(objects: List[sa.Table], model: Type[T]) -> Iterab
 	return models
 
 
-def extract_default_value_from_db_obj(db_obj: sa.Table) -> Dict[str, Any]:
+def extract_default_value_from_db_obj(db_obj: ST) -> Dict[str, Any]:
 	"""
 	Extracts created_at, updated_at, id from db obj
 
@@ -35,22 +35,6 @@ def extract_default_value_from_db_obj(db_obj: sa.Table) -> Dict[str, Any]:
 	}
 
 
-def convert_sub_objs_to_db_obj(obj_in: T, name: str, db_type: sa.Table) -> sa.Table:
-	obj = getattr(obj_in, name)
-	data = jsonable_encoder(obj)
-	return db_type(**data)
-
-
-def fill_sub_models(obj_in: dict[str, Any]):
-	pass
-
-
-def detect_sub_models(obj_in: T) -> List[str]:
-	result = []
-
-	for key, value in obj_in.__fields__.items():
-		if isinstance(value.type_, BaseModel) or issubclass(value.type_, BaseModel):
-			result.append(key)
-
-	return result
+def remove_default_values_db_obj(db_obj: T) -> T:
+	return db_obj.copy(exclude=["id", "created_at", "updated_at"])
 

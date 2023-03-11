@@ -9,6 +9,7 @@ from httpx import AsyncClient
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.db.engine import get_meta
 from app.db.repositories.user import UserCrud, Users
 from app.models.domain.users import UserInDB
 from app.models.schemas.users import UserInCreate
@@ -64,13 +65,18 @@ def test_user_schema() -> UserInDB:
         email=EmailStr("TestUser@gmail.com"),
     )
 
+# garbage
+@pytest.fixture
+def user_password() -> str:
+    return "Test@password"
+
 
 @pytest.fixture
-async def test_user(db: AsyncSession, test_user_schema: UserInDB) -> Users:
+async def test_user(db: AsyncSession, test_user_schema: UserInDB, user_pswd: str) -> Users:
     test_user_schema = UserInCreate(
         username=test_user_schema.username,
         email=EmailStr(test_user_schema.email),
-        password="Test@password",
+        password=user_pswd,
     )
 
     user, _ = await UserCrud.get_or_create(db, test_user_schema)
@@ -94,7 +100,8 @@ def authorized_client(
 
 
 @pytest.fixture
-def test_db_model() -> sa.Table:
+def example_db_model() -> sa.Table:
     return sa.Table(
-
+        "temp", get_meta(),
+        sa.Column("id", sa.Integer, primary_key=True)
     )

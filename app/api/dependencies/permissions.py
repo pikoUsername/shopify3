@@ -55,7 +55,7 @@ class CheckPermission:
 		Will raise HTTPForbidden if user permissions not enough to use this route
 
 		* Note: for frontend part, if user is not authed and has anonymous status
-		  then redirect him to login page, and save first url somewhere
+		  then redirect user to login page, and save origin url somewhere
 
 		:param session:
 		:param user:

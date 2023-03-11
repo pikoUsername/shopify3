@@ -20,4 +20,6 @@ class IDModelMixin(BaseModel):
 
 
 class SuccessfulResponse(BaseModel):
-	pass
+	# does not have error response
+	success: bool
+	data: str

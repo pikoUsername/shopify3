@@ -20,3 +20,7 @@ def get_db() -> AsyncSession:
 	:return:
 	"""
 	return Session()
+
+
+def get_meta() -> MetaData:
+	return Meta

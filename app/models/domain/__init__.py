@@ -4,7 +4,7 @@
 # FIXED, НЕ ТРОГАТЬ НЕ ТРОГАТЬ
 from .comments import CommentInDB
 from .groups import GroupInDB
-from .perms import PermissionsInDB
+from .perms import PermissionsInDB, Permissions
 from .products import ProductInDB
 from .product_lists import ProductListInDB
 from .review import ReviewInDB
@@ -26,3 +26,4 @@ SellerInDB.update_forward_refs(**locals())
 CommentSection.update_forward_refs(**locals())
 User.update_forward_refs(**locals())
 UserInDB.update_forward_refs(**locals())
+Permissions.update_forward_refs(**locals())

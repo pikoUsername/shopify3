@@ -4,8 +4,8 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 import sqlalchemy as sa
 from loguru import logger
-from sqlalchemy.engine import Result
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm.collections import InstrumentedList
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.repositories.base import BaseModel as DBBaseModel
@@ -82,6 +82,7 @@ class BaseCrud(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 	async def create(cls, db: AsyncSession, obj_in: CreateSchemaType) -> ModelType:
 		obj_in_data = jsonable_encoder(obj_in, exclude_unset=True)
 		db_obj = cls.model(**obj_in_data)
+		# InstrumentedAttribute.type
 		db.add(db_obj)
 		await db.commit()
 		await db.refresh(db_obj)  # is it detached?

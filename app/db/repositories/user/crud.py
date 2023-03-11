@@ -24,7 +24,7 @@ class UserCrud(BaseCrud[Users, UserInCreate, UserInUpdate]):
 	@classmethod
 	async def get_by_email(cls, db: AsyncSession, email: str) -> Optional[Users]:  # noqa
 		result = await db.execute(
-			sa.select(Users).where(Users.email == email))
+			sa.select(Users).where(Users.c.email == email))
 		return result.scalar()
 
 	@classmethod
